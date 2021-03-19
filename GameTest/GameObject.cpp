@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "Entity.h"
 #include "EntityManager.h"
-#include "ComponentManager.h"
 #include "Transform.h"
 
 
@@ -16,10 +15,11 @@ GameObject::GameObject()
 	_entity = entManager->createEntity();
 	
 	// Assign a transform component.
-	_transform = new Transform(this, _entity->getEid(), "GameObject" + std::to_string(_entity->getEid()));
+	//_transform = new Transform(this, _entity->getEid(), "GameObject" + std::to_string(_entity->getEid()));
 
-	ComponentManager* compManager = ComponentManager::getInstance();
-	compManager->addComponent(_entity, _transform);
+	//ComponentManager* compManager = ComponentManager::getInstance();
+	//compManager->addComponent(_entity, _transform);
+	_transform = ComponentManager::getInstance()->addComponent<Transform>(_entity, this, _entity->getEid(), "GameObject" + std::to_string(_entity->getEid()));
 }
 
 GameObject::~GameObject()

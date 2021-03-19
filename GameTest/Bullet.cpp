@@ -15,20 +15,31 @@ Bullet::Bullet()
 {
 	_transform->setLocalPosition(vec3(10.0f, 256.0f, 0.0f));
 
-	CircleCollider2D* collider = new CircleCollider2D(this, _transform, vec2(_transform->getWorldPosition()), 80.0f);
+	//CircleCollider2D* collider = new CircleCollider2D(this, _transform, vec2(_transform->getWorldPosition()), 80.0f);
+	//collider->onCollisionEnter = std::bind(&Bullet::onCollisionEnter, this, std::placeholders::_1);
+
+	//Rigidbody2D* rb = new Rigidbody2D(this, _transform, 10.0f, 1.0f, 0.0f, false);
+	//collider->attachRigidbody(rb);
+
+	//Sprite* sprite = new Sprite(this, _transform, ".\\TestData\\Test.bmp", 8, 4);
+
+
+	//ComponentManager* compManager = ComponentManager::getInstance();
+	//compManager->addComponent<Collider2D>(_entity, collider);
+	//compManager->addComponent<Rigidbody2D>(_entity, rb);
+	//compManager->addComponent<Sprite>(_entity, sprite);
+
+
+
+	CircleCollider2D* collider = addComponent<CircleCollider2D>(vec2(_transform->getWorldPosition()), 80.0f);
 	collider->onCollisionEnter = std::bind(&Bullet::onCollisionEnter, this, std::placeholders::_1);
 
-	Rigidbody2D* rb = new Rigidbody2D(this, _transform, 10.0f, 1.0f, 0.0f, false);
-	collider->attachRigidbody(rb);
+	Rigidbody2D* rigidbody = addComponent<Rigidbody2D>(10.0f, 1.0f, 0.0f, false);
+	collider->attachRigidbody(rigidbody);
+	//rbOne->setIsKinematic(true);
+	//_rigidbody->addForce(vec2(0.0f, 1000.0f), ForceType::IMPULSE);
 
-	Sprite* sprite = new Sprite(this, _transform, ".\\TestData\\Test.bmp", 8, 4);
-
-
-	ComponentManager* compManager = ComponentManager::getInstance();
-	compManager->addComponent(_entity, _transform);
-	compManager->addComponent<Collider2D>(_entity, collider);
-	compManager->addComponent<Rigidbody2D>(_entity, rb);
-	compManager->addComponent<Sprite>(_entity, sprite);
+	Sprite* sprite = addComponent<Sprite>(".\\TestData\\Test.bmp", 8, 4);
 }
 
 Bullet::~Bullet()

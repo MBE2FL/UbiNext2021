@@ -23,6 +23,17 @@ public:
 	void addComponent(Entity* entity, T* component);
 
 	/// <summary>
+	/// Adds a component to an entity.
+	/// </summary>
+	/// <typeparam name="T">Component Type</typeparam>
+	/// <typeparam name="...Args">The constructor parameters for the new component.</typeparam>
+	/// <param name="entity">The entity to add to.</param>
+	/// <param name="...args">The constructor parameters for the new component.</param>
+	/// <returns>The newly added component.</returns>
+	template<typename T, typename... Args>
+	T* addComponent(Entity* entity, Args&&... args);
+
+	/// <summary>
 	/// Removes a component from an entity.
 	/// </summary>
 	/// <typeparam name="T">Component Type</typeparam>
@@ -73,7 +84,7 @@ inline void ComponentManager::addComponent(Entity* entity, T* component)
 	// Check if the component type already exists.
 	if (it != _componentArrays.end())
 	{
-		static_cast<ComponentArray<T>*>(it->second)->addComponent(entity, component);	// TO-DO Delete old component.
+		static_cast<ComponentArray<T>*>(it->second)->addComponent(entity, component);
 	}
 	// Add a component array for the new component type.
 	else
@@ -85,10 +96,34 @@ inline void ComponentManager::addComponent(Entity* entity, T* component)
 	}
 }
 
+template<typename T, typename ...Args>
+inline T* ComponentManager::addComponent(Entity* entity, Args &&... args)
+{
+	//const char* typeName = typeid(T).name();
+	const char* typeName = T::getBaseTypeName();
+
+	std::unordered_map<const char*, IComponentArray*>::iterator it = _componentArrays.find(typeName);
+
+	// Check if the component type already exists.
+	if (it != _componentArrays.end())
+	{
+		return static_cast<ComponentArray<T>*>(it->second)->addComponent(entity, std::forward<Args>(args)...);
+	}
+	// Add a component array for the new component type.
+	else
+	{
+		ComponentArray<T>* compArray = new ComponentArray<T>();
+		_componentArrays[typeName] = compArray;
+
+		return compArray->addComponent(entity, std::forward<Args>(args)...);
+	}
+}
+
 template<typename T>
 inline void ComponentManager::removeComponent(Entity* entity)
 {
-	const char* typeName = typeid(T).name();
+	//const char* typeName = typeid(T).name();
+	const char* typeName = T::getBaseTypeName();
 
 	std::unordered_map<const char*, IComponentArray*>::iterator it = _componentArrays.find(typeName);
 
@@ -101,14 +136,15 @@ inline void ComponentManager::removeComponent(Entity* entity)
 	// Remove the component from the entity.
 	else
 	{
-		static_cast<ComponentArray<T>*>(it->second)->removeComponent(entity);
+		static_cast<ComponentArray<T>*>(it->second)->removeComponent(entity);	// TO-DO Delete old component.
 	}
 }
 
 template<typename T>
 inline T* ComponentManager::getComponent(Entity* entity) const
 {
-	const char* typeName = typeid(T).name();
+	//const char* typeName = typeid(T).name();
+	const char* typeName = T::getBaseTypeName();
 
 	std::unordered_map<const char*, IComponentArray*>::const_iterator it = _componentArrays.find(typeName);
 
@@ -129,7 +165,8 @@ inline T* ComponentManager::getComponent(Entity* entity) const
 template<typename T>
 inline ComponentArray<T>& ComponentManager::getAllComponentsOfType() const
 {
-	const char* typeName = typeid(T).name();
+	//const char* typeName = typeid(T).name();
+	const char* typeName = T::getBaseTypeName();
 
 	std::unordered_map<const char*, IComponentArray*>::const_iterator it = _componentArrays.find(typeName);
 

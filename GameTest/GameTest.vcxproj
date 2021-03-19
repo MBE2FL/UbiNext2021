@@ -185,6 +185,7 @@
     <ClInclude Include="App\TextureLoader.h" />
     <ClInclude Include="BoxCollider2D.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletCanon.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CircleCollider2D.h" />
     <ClInclude Include="Collider2D.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tower.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformSystem.h" />
     <ClInclude Include="vec2.h" />
@@ -245,6 +247,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SystemManager.cpp" />
+    <ClCompile Include="Tower.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformSystem.cpp" />
     <ClCompile Include="vec2.cpp" />

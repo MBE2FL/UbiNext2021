@@ -1,4 +1,5 @@
 #pragma once
+#include "ComponentManager.h"
 
 
 class Entity;
@@ -24,9 +25,37 @@ public:
 	void setActive(bool isActive);
 
 
+	template<typename T, typename... Args>
+	T* addComponent(Args&&... args);
+	template<typename T>
+	void removeComponent();
+	template<typename T>
+	T* getComponent() const;
+
+
 protected:
 	Entity* _entity;
 	Transform* _transform;
 	bool _isActive;
 	bool _isActiveSelf;
 };
+
+
+
+template<typename T, typename... Args>
+inline T* GameObject::addComponent(Args&&... args)
+{
+	return ComponentManager::getInstance()->addComponent<T>(_entity, this, _transform, std::forward<Args>(args)...);
+}
+
+template<typename T>
+inline void GameObject::removeComponent()
+{
+	ComponentManager::getInstance()->removeComponent<T>(_entity);
+}
+
+template<typename T>
+inline T* GameObject::getComponent() const
+{
+	return ComponentManager::getInstance()->getComponent<T>(_entity);
+}

@@ -52,6 +52,18 @@ void Sprite::Update(float deltaTime)
     }
 }
 
+void Sprite::setTexture(const char* fileName)
+{
+    if (LoadTexture(fileName))
+    {
+        CalculateUVs();
+        _vertices[0] = vec2(-(_width / 2.0f), -(_height / 2.0f));
+        _vertices[1] = vec2(_width / 2.0f, -(_height / 2.0f));
+        _vertices[2] = vec2(_width / 2.0f, _height / 2.0f);
+        _vertices[3] = vec2(-(_width / 2.0f), _height / 2.0f);
+    }
+}
+
 void Sprite::CalculateUVs()
 {
     float u = 1.0f / _numColumns;
@@ -87,7 +99,11 @@ void Sprite::Draw()
     //glTranslatef(x, y, 0.0f);
     //glScalef(scalex, scaley, 0.1f);
     //glRotatef(m_angle * 180 / PI, 0.0f, 0.0f, 1.0f);
+#if APP_USE_VIRTUAL_RES
     glOrtho(0.0f, APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_HEIGHT, 0.0f, 1.0f);
+#else
+    glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+#endif
     glMultMatrixf(transform->getLocalToWorldMatrix()._data);
     glColor4f(_colour.r, _colour.g, _colour.b, _colour.a);
     glEnable(GL_BLEND);

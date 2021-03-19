@@ -122,6 +122,13 @@ public:
 	~Transform();
 
 
+	static inline const char* getBaseTypeName()
+	{
+		static const char* baseTypeName = "Transform";
+		return baseTypeName;
+	}
+
+
 	/// <summary>
 	/// Updates this transform component, iff it requires updating.
 	/// </summary>

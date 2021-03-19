@@ -25,6 +25,13 @@ public:
 	~Rigidbody2D() = default;
 
 
+	static inline const char* getBaseTypeName()
+	{
+		static const char* baseTypeName = "Rigidbody2D";
+		return baseTypeName;
+	}
+
+
 	void addForce(const vec2& force, ForceType forceType);
 	void update(float deltaTime);
 

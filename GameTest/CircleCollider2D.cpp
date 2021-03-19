@@ -47,7 +47,11 @@ void CircleCollider2D::debugDraw() const
     float twicePI = 2.0f * PI;
 
     glPushMatrix();
+#if APP_USE_VIRTUAL_RES
     glOrtho(0.0f, APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_HEIGHT, 0.0f, 1.0f);
+#else
+    glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+#endif
     glMultMatrixf(localToWorld._data);
     //glLoadMatrixf(localToWorld._data);
     //glTranslatef(localToWorld.m03, localToWorld.m13, 0.0f);

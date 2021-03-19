@@ -156,7 +156,11 @@ void BoxCollider2D::debugDraw() const
     //glRotatef(_transform->getLocalRotation().y, 0.0f, 1.0f, 0.0f);
     //glRotatef(_transform->getLocalRotation().z, 0.0f, 0.0f, 1.0f);
     //glGetFloatv(GL_MODELVIEW_MATRIX, getMat._data);
+#if APP_USE_VIRTUAL_RES
     glOrtho(0.0f, APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_HEIGHT, 0.0f, 1.0f);
+#else
+    glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+#endif
     glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

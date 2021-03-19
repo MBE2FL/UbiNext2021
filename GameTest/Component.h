@@ -15,6 +15,7 @@ public:
 	virtual ~Component();
 
 
+
 	GameObject* gameObject;
 	Transform* transform;
 };

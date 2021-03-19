@@ -24,7 +24,7 @@ Transform::Transform(GameObject* _gameObject,
     const vec3& rotation, 
     const vec3& scale, 
     Transform* parent)
-    : Component(_gameObject, this), 
+    : Component(_gameObject, this),
     _eid(eid), 
     _name(name), 
     _flags(static_cast<TransformFlags>(TransformFlagBits::HAS_CHANGED | TransformFlagBits::IS_ROOT)), 

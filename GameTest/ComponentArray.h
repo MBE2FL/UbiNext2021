@@ -23,12 +23,21 @@ public:
 	~ComponentArray();
 
 
+	///// <summary>
+	///// Adds a component to an entity.
+	///// </summary>
+	///// <param name="entity">The entity to add to.</param>
+	///// <param name="component">The component to add.</param>
+	//void addComponent(Entity* entity, T* component);
 	/// <summary>
 	/// Adds a component to an entity.
 	/// </summary>
+	/// <typeparam name="...Args">The constructor parameters for the new component.</typeparam>
 	/// <param name="entity">The entity to add to.</param>
-	/// <param name="component">The component to add.</param>
-	void addComponent(Entity* entity, T* component);
+	/// <param name="...args">The constructor parameters for the new component.</param>
+	/// <returns>The newly added component.</returns>
+	template<typename... Args>
+	T* addComponent(Entity* entity, Args&&... args);
 	/// <summary>
 	/// Removes a component from an entity.
 	/// </summary>
@@ -129,8 +138,37 @@ inline ComponentArray<T>::~ComponentArray()
 	_denseIndices.clear();
 }
 
+//template<typename T>
+//inline void ComponentArray<T>::addComponent(Entity* entity, T* component)
+//{
+//	// Check if the entity doesn't already have a component of type T.
+//	if (!hasComponent(entity))
+//	{
+//		// Check if sparse set needs to be resized to accommodate the entity.
+//		if (entity->getEid() > _sparseIndices.size())
+//		{
+//			resize(_sparseIndices.size() + 1);
+//		}
+//
+//
+//		// Construct a new component for the entity.
+//		_compArray.push_back(component);
+//
+//
+//		// Create the link between the entites id and the index of it's component in the sparse set.
+//		//_denseIndices[_size] = entity.getEid();
+//		_denseIndices.push_back(entity->getEid());
+//		_sparseIndices[entity->getEid()] = _size;
+//		
+//
+//		// Increment the size of the tightly packed component pool.
+//		++_size;
+//	}
+//}
+
 template<typename T>
-inline void ComponentArray<T>::addComponent(Entity* entity, T* component)
+template<typename ...Args>
+inline T* ComponentArray<T>::addComponent(Entity* entity, Args&&... args)
 {
 	// Check if the entity doesn't already have a component of type T.
 	if (!hasComponent(entity))
@@ -143,6 +181,7 @@ inline void ComponentArray<T>::addComponent(Entity* entity, T* component)
 
 
 		// Construct a new component for the entity.
+		T* component = new T(std::forward<Args>(args)...);
 		_compArray.push_back(component);
 
 
@@ -150,10 +189,14 @@ inline void ComponentArray<T>::addComponent(Entity* entity, T* component)
 		//_denseIndices[_size] = entity.getEid();
 		_denseIndices.push_back(entity->getEid());
 		_sparseIndices[entity->getEid()] = _size;
-		
+
 
 		// Increment the size of the tightly packed component pool.
 		++_size;
+
+
+		// Return the newly constructed component.
+		return component;
 	}
 }
 

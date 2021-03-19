@@ -19,6 +19,15 @@ public:
     // fileName: File must be a 32 bit BMP format (A8 R8 G8 B8). The alpha channel can be used to mask out the sprite.
     // nColumns and nRows defines the number of frames in the sprite page. 
     Sprite(GameObject* gameObject, Transform* transform, const char* fileName, size_t nColumns = 1, size_t nRows = 1);
+
+
+    static inline const char* getBaseTypeName()
+    {
+        static const char* baseTypeName = "Sprite";
+        return baseTypeName;
+    }
+
+
     // Update, call from your game update function.
     void Update(float deltaTime);
     // Draw, call from your game draw function.
@@ -70,6 +79,8 @@ public:
 
         return _vertices[i]; 
     }
+
+    void setTexture(const char* fileName);
 
 private:
     void CalculateUVs();

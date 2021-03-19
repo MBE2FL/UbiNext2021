@@ -110,6 +110,13 @@ public:
 	virtual ~Collider2D() = default;
 
 
+	static inline const char* getBaseTypeName()
+	{
+		static const char* baseTypeName = "Collider2D";
+		return baseTypeName;
+	}
+
+
 	inline Collider2DType getColliderType() const
 	{
 		return _colliderType;
