@@ -86,14 +86,44 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>API\source\Entity Component System\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>API\source\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Ship.cpp">
       <Filter>API\source\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Tower.cpp">
       <Filter>API\source\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>API\source\Objects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletCannon.cpp">
+      <Filter>API\source\Entity Component System\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp">
+      <Filter>API\source\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>API\source\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPlacement.cpp">
+      <Filter>API\source\Objects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Factory.cpp">
+      <Filter>API\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>API\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>API\source\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="TowerSystem.cpp">
+      <Filter>API\source\Entity Component System\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>API\source\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>API\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,8 +238,35 @@
     <ClInclude Include="Tower.h">
       <Filter>API\headers\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="BulletCanon.h">
+    <ClInclude Include="BulletCannon.h">
       <Filter>API\headers\Entity Component System\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>API\headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPlacement.h">
+      <Filter>API\headers\Objects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>API\headers\Objects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Factory.h">
+      <Filter>API\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>API\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>API\headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TowerSystem.h">
+      <Filter>API\headers\Entity Component System\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>API\headers\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>API\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +323,12 @@
     </Filter>
     <Filter Include="API\source\Objects">
       <UniqueIdentifier>{58197307-3b5b-4f33-acb0-31fa05bb6868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\headers\Objects\UI">
+      <UniqueIdentifier>{89183380-4da3-430b-90d1-6a972bc0fc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API\source\Objects\UI">
+      <UniqueIdentifier>{e8877094-4e5b-4053-88f6-9a1f33cae6c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

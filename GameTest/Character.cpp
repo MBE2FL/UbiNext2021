@@ -22,7 +22,7 @@ enum
 Character::Character()
 	: GameObject()
 {
-	_transform->setLocalPosition(vec3(500.0f, 300.0f, 0.0f));
+	transform->setLocalPosition(vec3(500.0f, 300.0f, 0.0f));
 
 	////CircleCollider2D* collider = new CircleCollider2D(transform, vec2(transform->getWorldPosition()), 50.0f);
 	//BoxCollider2D* collider = new BoxCollider2D(this, _transform, vec2(0.0f, 0.0f), vec2(100.0f, 100.0f));
@@ -80,59 +80,59 @@ void Character::update(float deltaTime)
 	{
 		_sprite->SetAnimation(ANIM_RIGHT);
 
-		vec3 pos = _transform->getLocalPosition();
+		vec3 pos = transform->getLocalPosition();
 		pos.x += 1.0f;
-		_transform->setLocalPosition(pos);
+		transform->setLocalPosition(pos);
 	}
 	if (App::GetController().GetLeftThumbStickX() < -0.5f)
 	{
 		_sprite->SetAnimation(ANIM_RIGHT);
 
-		vec3 pos = _transform->getLocalPosition();
+		vec3 pos = transform->getLocalPosition();
 		pos.x -= 1.0f;
-		_transform->setLocalPosition(pos);
+		transform->setLocalPosition(pos);
 	}
 	if (App::GetController().GetLeftThumbStickY() > 0.5f)
 	{
 		_sprite->SetAnimation(ANIM_RIGHT);
 
-		vec3 pos = _transform->getLocalPosition();
+		vec3 pos = transform->getLocalPosition();
 		pos.y += 1.0f;
-		_transform->setLocalPosition(pos);
+		transform->setLocalPosition(pos);
 	}
 	if (App::GetController().GetLeftThumbStickY() < -0.5f)
 	{
 		_sprite->SetAnimation(ANIM_RIGHT);
 
-		vec3 pos = _transform->getLocalPosition();
+		vec3 pos = transform->getLocalPosition();
 		pos.y -= 1.0f;
-		_transform->setLocalPosition(pos);
+		transform->setLocalPosition(pos);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_UP, false))
 	{
-		vec3 scale = _transform->getScale();
+		vec3 scale = transform->getScale();
 		scale.x += 0.1f;
 		scale.y += 0.1f;
-		_transform->setScale(scale);
+		transform->setScale(scale);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_DOWN, false))
 	{
-		vec3 scale = _transform->getScale();
+		vec3 scale = transform->getScale();
 		scale.x -= 0.1f;
 		scale.y -= 0.1f;
-		_transform->setScale(scale);
+		transform->setScale(scale);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_LEFT, false))
 	{
-		vec3 rot = _transform->getLocalRotation();
+		vec3 rot = transform->getLocalRotation();
 		rot.z += 0.1f;
-		_transform->setLocalRotation(rot);
+		transform->setLocalRotation(rot);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_RIGHT, false))
 	{
-		vec3 rot = _transform->getLocalRotation();
+		vec3 rot = transform->getLocalRotation();
 		rot.z -= 0.1f;
-		_transform->setLocalRotation(rot);
+		transform->setLocalRotation(rot);
 	}
 	if (App::GetController().CheckButton(XINPUT_GAMEPAD_A, true))
 	{

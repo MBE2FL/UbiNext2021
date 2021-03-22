@@ -54,8 +54,15 @@ public:
 	/// </summary>
 	/// <typeparam name="T">Component Type</typeparam>
 	/// <returns>All components of the specified type.</returns>
+	
+	/// <summary>
+	///	Gets an array of specified components.
+	/// </summary>
+	/// <typeparam name="T">Comonent Type</typeparam>
+	/// <param name="outCompArray">The array of components, or nullptr.</param>
+	/// <returns>True iff an array of specified components exists, false otherwise.</returns>
 	template<typename T>
-	ComponentArray<T>& getAllComponentsOfType() const;
+	bool getAllComponentsOfType(ComponentArray<T>** outCompArray) const;
 
 	/// <summary>
 	/// Callback for when an entity is destroyed.
@@ -163,7 +170,7 @@ inline T* ComponentManager::getComponent(Entity* entity) const
 }
 
 template<typename T>
-inline ComponentArray<T>& ComponentManager::getAllComponentsOfType() const
+inline bool ComponentManager::getAllComponentsOfType(ComponentArray<T>** outCompArray) const
 {
 	//const char* typeName = typeid(T).name();
 	const char* typeName = T::getBaseTypeName();
@@ -174,11 +181,14 @@ inline ComponentArray<T>& ComponentManager::getAllComponentsOfType() const
 	if (it == _componentArrays.cend())
 	{
 		std::cout << "Component type does not exist!" << std::endl;
-		return static_cast<ComponentArray<T>&>(*it->second);
+		*outCompArray = nullptr;
+		return false;
 	}
 	// Retrieve the component from the entity.
 	else
 	{
-		return static_cast<ComponentArray<T>&>(*it->second);
+		//return static_cast<ComponentArray<T>&>(*it->second);
+		*outCompArray = static_cast<ComponentArray<T>*>(it->second);
+		return true;
 	}
 }

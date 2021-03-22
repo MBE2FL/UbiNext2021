@@ -188,7 +188,7 @@ std::ostream& operator<<(std::ostream& stream, const vec4& vec)
 
 void vec4::normalize()
 {
-    *this / length();
+    *this /= length();
 }
 
 vec4 vec4::getNormalized() const

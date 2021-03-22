@@ -1,5 +1,6 @@
 #pragma once
 #include "App/AppSettings.h"
+#include <random>
 
 //#define PI 3.14159f
 
@@ -52,6 +53,16 @@ namespace MathUtils
     float distPointToAABB2D(const vec2& point, const Bounds2D& bounds);
 
     float distSqrPointToAABB2D(const vec2& point, const Bounds2D& bounds);
+
+
+    /// <summary>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="min">The start of the range.</param>
+    /// <param name="max">The end of the range.</param>
+    /// <returns>A random number in the provided range [min, max]. Note min and max are included.</returns>
+    template<typename T>
+    T randInRange(T min, T max);
 }
 
 
@@ -94,4 +105,17 @@ T MathUtils::invLerp(const T& value, const T& start, const T& end)
     {
         return ((value - start) / (end - start))
     }
+}
+
+template<typename T>
+T MathUtils::randInRange(T min, T max)
+{
+    // Setup random number generator.
+    //static std::random_device randomDevice;
+    //static std::mt19937 generator(randomDevice());
+    //static std::uniform_int_distribution<T> uniDist(min, max);
+
+    //return uniDist(generator);
+
+    return rand() % (max - min + 1) + min;
 }

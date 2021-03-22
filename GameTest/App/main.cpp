@@ -95,7 +95,7 @@ void InitGL()
 	StartCounter();
 	gLastTime = GetCounter();
 	// Set "clearing" or background color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black and opaque
+	glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // Black and opaque
 }
 
 //---------------------------------------------------------------------------------
@@ -185,7 +185,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 	glutDisplayFunc(Display);       // Register callback handler for window re-paint event	
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 	InitGL();                       // Our own OpenGL initialization
-
 
 
 	// Init sounds system.

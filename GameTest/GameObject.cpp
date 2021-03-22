@@ -19,7 +19,7 @@ GameObject::GameObject()
 
 	//ComponentManager* compManager = ComponentManager::getInstance();
 	//compManager->addComponent(_entity, _transform);
-	_transform = ComponentManager::getInstance()->addComponent<Transform>(_entity, this, _entity->getEid(), "GameObject" + std::to_string(_entity->getEid()));
+	transform = ComponentManager::getInstance()->addComponent<Transform>(_entity, this, _entity->getEid(), "GameObject" + std::to_string(_entity->getEid()));
 }
 
 GameObject::~GameObject()
@@ -28,7 +28,7 @@ GameObject::~GameObject()
 
 bool GameObject::getIsActive() const
 {
-    return _isActive;
+    return transform->getParent() ? transform->getRoot()->gameObject->getIsActive() : _isActive;
 }
 
 bool GameObject::getIsActiveSelf() const
@@ -39,7 +39,7 @@ bool GameObject::getIsActiveSelf() const
 void GameObject::setActive(bool isActive)
 {
 	// This object has a parent.
-	if (_transform->getParent())
+	if (transform->getParent())
 	{
 		_isActiveSelf = isActive;
 	}

@@ -138,6 +138,18 @@ void Transform::update()
 
 
 
+
+    if (_parent)
+    {
+        _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+    }
+    else
+    {
+        _localToWorldMatrix = _localTransformMatrix;
+    }
+
+
+
     // Check if this transform has changed and is not static.
     if ((_flags & TransformFlagBits::IS_STATIC) != TransformFlagBits::IS_STATIC)
     {
@@ -400,6 +412,16 @@ void Transform::setWorldPosition(const vec3& position)
         }
 
 
+        //if (_parent)
+        //{
+        //    _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+        //}
+        //else
+        //{
+        //    _localToWorldMatrix = _localTransformMatrix;
+        //}
+
+
         // Update this transform component.
         update();
     }
@@ -428,16 +450,16 @@ void Transform::setLocalPosition(const vec3& position)
         _localTransformMatrix.m13 = position.y;
         _localTransformMatrix.m23 = position.z;
 
-        if (_parent)
-        {
-            _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
-        }
-        else
-        {
-            _localToWorldMatrix.m03 = position.x;
-            _localToWorldMatrix.m13 = position.y;
-            _localToWorldMatrix.m23 = position.z;
-        }
+        //if (_parent)
+        //{
+        //    _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+        //}
+        //else
+        //{
+        //    _localToWorldMatrix.m03 = position.x;
+        //    _localToWorldMatrix.m13 = position.y;
+        //    _localToWorldMatrix.m23 = position.z;
+        //}
         
         _localPosition = position;
         _rootComponent->_flags |= TransformFlagBits::HAS_CHANGED;
@@ -537,14 +559,14 @@ void Transform::setLocalRotation(const vec3& rotation)
         _localTransformMatrix = trans * localRot * scale;
 
 
-        if (_parent)
-        {
-            _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
-        }
-        else
-        {
-            _localToWorldMatrix = _localTransformMatrix;
-        }
+        //if (_parent)
+        //{
+        //    _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+        //}
+        //else
+        //{
+        //    _localToWorldMatrix = _localTransformMatrix;
+        //}
 
 
 
@@ -582,14 +604,14 @@ void Transform::setScale(const vec3& scale)
         _localTransformMatrix = trans * localRot * scale;
 
 
-        if (_parent)
-        {
-            _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
-        }
-        else
-        {
-            _localToWorldMatrix = _localTransformMatrix;
-        }
+        //if (_parent)
+        //{
+        //    _localToWorldMatrix = _parent->getLocalToWorldMatrix() * _localTransformMatrix;
+        //}
+        //else
+        //{
+        //    _localToWorldMatrix = _localTransformMatrix;
+        //}
 
 
         // Update this transform component.

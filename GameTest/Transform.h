@@ -255,6 +255,13 @@ public:
 	{
 		return _parent;
 	}
+	/// <summary>
+	/// </summary>
+	/// <returns>The root of this object, or itself if this transform component is the root.</returns>
+	inline Transform* getRoot() const
+	{
+		return _rootComponent;
+	}
 
 
 	// ************ Transformation Functions ************
@@ -347,6 +354,16 @@ public:
 		return _eid;
 	}
 
+	inline std::string getTag() const
+	{
+		return _tag;
+	}
+
+	inline void setTag(const std::string& tag)
+	{
+		_tag = tag;
+	}
+
 
 	OnTransformUpdatedSignature onTransformUpdated;
 
@@ -355,6 +372,7 @@ private:
 	std::string _name;
 	TransformFlags _flags;
 	size_t _eid;
+	std::string _tag = "Untagged";
 
 	vec3 _localPosition;
 	vec3 _localRotation;

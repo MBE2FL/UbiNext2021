@@ -1,9 +1,15 @@
 #pragma once
 #include "ComponentManager.h"
+#include <functional>
 
 
 class Entity;
 class Transform;
+class GameObject;
+
+
+typedef std::function<void()> OnMouseClickSignature;
+typedef std::function<void(GameObject*)> OnRecycleSignature;
 
 
 
@@ -15,9 +21,10 @@ public:
 	virtual ~GameObject();
 
 
-	virtual void start() = 0;
-	virtual void update(float deltaTime) = 0;
-	virtual void fixedUpdate(float fixedDeltaTime) = 0;
+	virtual void start() {};
+	virtual void update(float deltaTime) {};
+	virtual void fixedUpdate(float fixedDeltaTime) {};
+	virtual void reset() {};
 
 
 	bool getIsActive() const;
@@ -33,9 +40,15 @@ public:
 	T* getComponent() const;
 
 
+	Transform* transform;
+
+	// Callbacks
+	std::vector<OnMouseClickSignature> onMouseClick;
+	OnRecycleSignature onRecycle;
+
+
 protected:
 	Entity* _entity;
-	Transform* _transform;
 	bool _isActive;
 	bool _isActiveSelf;
 };
@@ -45,7 +58,7 @@ protected:
 template<typename T, typename... Args>
 inline T* GameObject::addComponent(Args&&... args)
 {
-	return ComponentManager::getInstance()->addComponent<T>(_entity, this, _transform, std::forward<Args>(args)...);
+	return ComponentManager::getInstance()->addComponent<T>(_entity, this, transform, std::forward<Args>(args)...);
 }
 
 template<typename T>

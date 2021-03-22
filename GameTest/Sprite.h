@@ -16,6 +16,7 @@ class Transform;
 class Sprite : public Component
 {
 public:
+    Sprite(GameObject* gameObject, Transform* transform);
     // fileName: File must be a 32 bit BMP format (A8 R8 G8 B8). The alpha channel can be used to mask out the sprite.
     // nColumns and nRows defines the number of frames in the sprite page. 
     Sprite(GameObject* gameObject, Transform* transform, const char* fileName, size_t nColumns = 1, size_t nRows = 1);
@@ -80,9 +81,35 @@ public:
         return _vertices[i]; 
     }
 
-    void setTexture(const char* fileName);
+    void setTexture(const char* fileName, size_t nColumns = 1, size_t nRows = 1);
+    inline const char* getTexFileName() const
+    {
+        return _fileName;
+    }
+    inline size_t getNumColumns() const
+    {
+        return _numColumns;
+    }
+    inline size_t getNumRows() const
+    {
+        return _numRows;
+    }
+
+    bool isMouseOverSprite(const vec2& mousePos) const;
+
+    inline float getAlpha() const
+    {
+        return _colour.a;
+    }
+    inline void setAlpha(float alpha)
+    {
+        _colour.a = alpha;
+    }
+
 
 private:
+    const char* _fileName;
+
     void CalculateUVs();
     GLuint _texture;
 

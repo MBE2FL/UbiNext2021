@@ -2,6 +2,9 @@
 #include "System.h"
 
 
+class GameObject;
+
+
 
 class Rendering2DSystem : public System
 {
@@ -11,4 +14,8 @@ public:
 
 
 	void draw();
+
+
+private:
+	GameObject* _selectedObject;
 };

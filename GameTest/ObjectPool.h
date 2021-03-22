@@ -4,6 +4,7 @@
 #pragma once
 #include "stdafx.h"
 #include <functional>
+#include "Factory.h"
 
 
 #define POOL_SIZE_INCREASE 20
@@ -24,39 +25,13 @@ public:
 	T* getObject();
 
 
-	//typedef std::vector<T*> vector_type;
-	//typedef vector_type::iterator iterator;
-	//typedef vector_type::const_iterator const_iterator;
-
-	//inline iterator begin() noexcept
-	//{
-
-	//	return _pool.begin();
-	//}
-
-	//inline const_iterator cbegin() noexcept
-	//{
-	//	return _pool.cbegin();
-	//}
-
-	//inline iterator end() noexcept
-	//{
-	//	return _pool.end();
-	//}
-
-	//inline const_iterator cend() noexcept
-	//{
-	//	return _pool.cend();
-	//}
-
-
 private:
 	std::vector<T*> _pool;
 	std::vector<T*> _activePool;
 	T* _prototype;
 
 
-	void recycleObject(T* object);
+	void recycleObject(GameObject* object);
 	void resetObject(T* object);
 	void addObjectsToPool(size_t numObjects);
 };
@@ -97,7 +72,8 @@ inline ObjectPool<T>::ObjectPool(size_t initialSize, Args&&... defaultObjectArgs
 	for (size_t i = 0; i < initialSize; ++i)
 	{
 		//T* object = new T(*_prototype);
-		T* object = new T(std::forward<Args>(defaultObjectArgs)...);
+		//T* object = new T(std::forward<Args>(defaultObjectArgs)...);
+		T* object = Factory::getInstance()->create<T>(std::forward<Args>(defaultObjectArgs)...);
 		_pool.emplace_back(object);
 
 		// Deactivate the object.
@@ -146,15 +122,17 @@ inline T* ObjectPool<T>::getObject()
 }
 
 template<typename T>
-inline void ObjectPool<T>::recycleObject(T* object)
+inline void ObjectPool<T>::recycleObject(GameObject* object)
 {
+	T* castObject = static_cast<T*>(object);
+
 	// Recycle the object back into this pool.
-	_pool.emplace_back(object);
+	_pool.emplace_back(castObject);
 
 	// Remove object from the active pool.
 	for (size_t i = 0; i < _activePool.size(); ++i)
 	{
-		if (object == _activePool[i])
+		if (castObject == _activePool[i])
 		{
 			T* temp = _activePool.back();
 			_activePool[i] = temp;
@@ -163,10 +141,10 @@ inline void ObjectPool<T>::recycleObject(T* object)
 	}
 
 	// Reset the object.
-	resetObject(object);
+	resetObject(castObject);
 
 	// Deactivate the object.
-	object->setActive(false);
+	castObject->setActive(false);
 }
 
 template<typename T>
@@ -174,7 +152,7 @@ inline void ObjectPool<T>::resetObject(T* object)
 {
 	//object = *_prototype;
 
-	object->resetObject();
+	object->reset();
 
 	// TO-DO Deactivate object
 }
@@ -188,7 +166,9 @@ inline void ObjectPool<T>::addObjectsToPool(size_t numObjects)
 	for (size_t i = 0; i < numObjects; ++i)
 	{
 		//_pool.emplace_back(new T(*_prototype));
-		_pool.emplace_back(new T());
+		//T* object = new T();
+		T* object = Factory::getInstance()->create<T>();
+		_pool.emplace_back(object);
 
 		object->start();
 	}

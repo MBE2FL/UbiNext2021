@@ -206,6 +206,9 @@ void mat4::invert()
     mat4 result = *this;
     result[3] = vec4::zero;
     result.transpose();
+    result.m00 = 1.0f / result.m00;
+    result.m11 = 1.0f / result.m11;
+    result.m22 = 1.0f / result.m22;
 
     vec4 translation = -(result * _columns[3]);
     translation.w = 1.0f;

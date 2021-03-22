@@ -25,22 +25,33 @@
 #include "BoxCollider2D.h"
 #include "CircleCollider2D.h"
 #include "Sprite.h"
+#include "BulletCannon.h"
 
 #include "SystemManager.h"
 #include "TransformSystem.h"
 #include "Physics2DSystem.h"
 #include "Rendering2DSystem.h"
+#include "TowerSystem.h"
+#include "Input.h"
 
 #include "ObjectPool.h"
 #include "Bullet.h"
 #include "Character.h"
 #include "Ship.h"
+#include "Tower.h"
+#include "UIButton.h"
+#include "Factory.h"
+#include "ObjectPlacement.h"
+#include "Enemy.h"
+#include "Ground.h"
+#include "Path.h"
+#include "Map.h"
 
 //------------------------------------------------------------------------
 // Eample data....
 //------------------------------------------------------------------------
-CSimpleSprite *testSprite;
-CSimpleSprite *testSprite2;
+//CSimpleSprite *testSprite;
+//CSimpleSprite *testSprite2;
 enum
 {
 	ANIM_FORWARDS,
@@ -54,9 +65,11 @@ enum
 EntityManager* entManager;
 ComponentManager* compManager;
 SystemManager* sysManager;
-TransformSystem* transformSystem;
+//TransformSystem* transformSystem;
 Physics2DSystem* physics2DSystem;
 Rendering2DSystem* rendering2DSystem;
+TowerSystem* towerSystem;
+
 
 //Entity* entity;
 //Entity* entityTwo;
@@ -67,143 +80,89 @@ Rendering2DSystem* rendering2DSystem;
 //Sprite* spriteTwo;
 Character* player;
 Ship* ship;
+Tower* testTower;
+UIButton* towerOneButton;
+UIButton* enemyButton;
+UIButton* groundButton;
+UIButton* pathButton;
+GameObject* selectedGameObject = nullptr;
+Factory* factory;
+Map* simpleMap;
 
-ObjectPool<Bullet>* bulletPool;
+
+std::vector<Transform*> spawnPoints;
+
+
+ObjectPool<Enemy>* enemyPool;
 std::vector<GameObject*> gameObjects;
+
+void addGameObject(GameObject* object)
+{
+	gameObjects.emplace_back(object);
+}
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
 //------------------------------------------------------------------------
 void Init()
 {
-	//------------------------------------------------------------------------
-	// Example Sprite Code....
-	
-
-	testSprite = App::CreateSprite(".\\TestData\\Test.bmp", 8, 4);
-	//testSprite->SetPosition(400.0f, 400.0f);
-	testSprite->SetPosition(512.0f, 250.0f);
-	float speed = 1.0f / 15.0f;
-	testSprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
-	testSprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
-	testSprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
-	testSprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
-	testSprite->SetScale(2.0f);
-
-	testSprite2 = App::CreateSprite(".\\TestData\\Ships.bmp", 2, 12);
-	testSprite2->SetPosition(400.0f, 400.0f);	
-	testSprite2->SetFrame(2);
-	testSprite2->SetScale(1.0f);
-	//------------------------------------------------------------------------
-
+	factory = Factory::getInstance();
+	factory->onObjectCreated = std::bind(&addGameObject, std::placeholders::_1);
 
 	entManager = EntityManager::getInstance();
 	compManager = ComponentManager::getInstance();
 	sysManager = SystemManager::getInstance();
 
 
-	transformSystem = sysManager->registerSystem<TransformSystem>();
+	//transformSystem = sysManager->registerSystem<TransformSystem>();
+	rendering2DSystem = sysManager->registerSystem<Rendering2DSystem>();
 	physics2DSystem = sysManager->registerSystem<Physics2DSystem>();
+	towerSystem = sysManager->registerSystem<TowerSystem>();
 
 
-	//entity = entManager->createEntity();
-	//entityTwo = entManager->createEntity();
-	//entityThree = entManager->createEntity();
-	//entityFour = entManager->createEntity();
 
+	simpleMap = Map::getMap();
+
+
+	spawnPoints.emplace_back(simpleMap->tiles[0][2]->transform);
+	spawnPoints.emplace_back(simpleMap->tiles[0][3]->transform);
+	spawnPoints.emplace_back(simpleMap->tiles[0][6]->transform);
+	spawnPoints.emplace_back(simpleMap->tiles[0][7]->transform);
 
 
 	// ************ Object One ************
-	player = new Character();
-	gameObjects.push_back(player);
-	//transform = new Transform(entity->getEid(), "Howdy");
-	//transform->setLocalPosition(vec3(500.0f, 300.0f, 0.0f));
-	//transform->setLocalRotation(vec3(0.0f, 0.0f, 0.0f));
-
-	//BoxCollider2D* collider = new BoxCollider2D(transform, vec2(0.0f, 0.0f), vec2(100.0f, 100.0f));
-
-	//Rigidbody2D* rbOne = new Rigidbody2D(transform, 10.0f, 1.0f, 0.0f, false);
-	//collider->attachRigidbody(rbOne);
-	////rbOne->setIsKinematic(true);
-	//rbOne->addForce(vec2(0.0f, 1000.0f), ForceType::IMPULSE);
-
-	//sprite = new Sprite(transform, ".\\TestData\\Test.bmp", 8, 4);
-	//speed = 1.0f / 15.0f;
-	//sprite->CreateAnimation(ANIM_BACKWARDS, speed, { 0,1,2,3,4,5,6,7 });
-	//sprite->CreateAnimation(ANIM_LEFT, speed, { 8,9,10,11,12,13,14,15 });
-	//sprite->CreateAnimation(ANIM_RIGHT, speed, { 16,17,18,19,20,21,22,23 });
-	//sprite->CreateAnimation(ANIM_FORWARDS, speed, { 24,25,26,27,28,29,30,31 });
-
+	//player = factory->create<Character>();
 
 
 	// ************ Object Two ************
-	ship = new Ship();
-	gameObjects.push_back(ship);
-	//Transform* transformTwo = new Transform(entityTwo->getEid(), "Doody");
-	//transformTwo->setLocalPosition(vec3(500.0f, 450.0f, 0.0f));
-	//transformTwo->setLocalRotation(vec3(0.0f, 0.0f, 0.0f));
-	//transformTwo->setScale(vec3(0.5f, 0.5f, 0.1f));
-
-	////BoxCollider2D* colliderTwo = new BoxCollider2D(transformTwo, vec2(transformTwo->getWorldPosition()), vec2(100.0f, 100.0f));
-	//CircleCollider2D* colliderTwo = new CircleCollider2D(transformTwo, vec2(transformTwo->getWorldPosition()), 80.0f);
-	////BoxCollider2D* colliderTwo = new BoxCollider2D(transformTwo, vec2(transformTwo->getWorldPosition()), vec2(100.0f, 100.0f));
-
-	//Rigidbody2D* rbTwo = new Rigidbody2D(transformTwo, 10.0f, 1.0f, .5f, true);
-	//colliderTwo->attachRigidbody(rbTwo);
-
-	//spriteTwo = new Sprite(transformTwo, ".\\TestData\\Ships.bmp", 2, 12);
-	//spriteTwo->SetFrame(2);
+	//ship = factory->create<Ship>();
 
 
 
-	// ************ Object Three ************
-	//Transform* transformThree = new Transform(entityThree->getEid(), "TestThree");
-	//transformThree->setLocalPosition(vec3(250.0f, 250.0f, 0.0f));
-	//transformThree->setLocalRotation(vec3(0.0f, 0.0f, 0.0f));
-	////transformThree->addChild(transform);
-
-	//BoxCollider2D* colliderThree = new BoxCollider2D(transformThree, vec2(0.0f, 0.0f), vec2(50.0f, 80.0f));
+	enemyPool = new ObjectPool<Enemy>(50);
+	//Enemy* enemy = enemyPool->getObject();
+	//enemy->transform->setWorldPosition(vec3(800.0f, 300.0f, -20.0f));
 
 
 
-	// ************ Object Four ************
-	//Transform* transformFour = new Transform(entityFour->getEid(), "TestFour");
-	//transformFour->setLocalPosition(vec3(700.0f, 400.0f, 0.0f));
-	//transformFour->setLocalRotation(vec3(0.0f, 0.0f, 0.0f));
-	//transformFour->setParent(transformThree);
+	//towerOneButton = new UIButton();
+	towerOneButton = factory->create<UIButton>();
+	towerOneButton->setImage(".\\TestData\\TowerOneTest.bmp", 1, 1);
+	towerOneButton->transform->setWorldPosition(vec3(512.0f, 20.0f, 0.0f));
+	gameObjects.emplace_back(towerOneButton);
+	towerOneButton->onClicked.emplace_back(
+		[]() 
+		{
+			Tower* tower = Factory::getInstance()->create<Tower>();
+			tower->addComponent<BulletCannon>();
+			//tower->setTexture(".\\TestData\\Ships.bmp", 2, 12);
+			tower->setTexture(".\\TestData\\TowerOneTest.bmp", 1, 1);
+			tower->getSprite()->SetFrame(0);
+			tower->setActive(false);
 
-	//BoxCollider2D* colliderFour = new BoxCollider2D(transformFour, vec2(0.0f, 0.0f), vec2(50.0f, 100.0f));
-
-
-	
-	//compManager->addComponent(entity, transform);
-	//compManager->addComponent(entityTwo, transformTwo);
-	//compManager->addComponent(entityThree, transformThree);
-	//compManager->addComponent(entityFour, transformFour);
-
-	//compManager->addComponent<Collider2D>(entity, collider);
-	//compManager->addComponent<Collider2D>(entityTwo, colliderTwo);
-	//compManager->addComponent<Collider2D>(entityThree, colliderThree);
-	//compManager->addComponent<Collider2D>(entityFour, colliderFour);
-
-	//compManager->addComponent<Rigidbody2D>(entity, rbOne);
-	//compManager->addComponent<Rigidbody2D>(entityTwo, rbTwo);
-
-	//compManager->addComponent<Sprite>(entity, sprite);
-	//compManager->addComponent<Sprite>(entityTwo, spriteTwo);
-
-	//compManager->removeComponent<TransformComponent>(entity);
-
-
-	//transformSystem->update(0.0f);
-
-
-
-	bulletPool = new ObjectPool<Bullet>(50);
-	//Bullet* b = bulletPool->getObject();
-	//Bullet* b2 = bulletPool->getObject();
-	//Bullet* b3 = bulletPool->getObject();
-
+			ObjectPlacement* objectPlacer = Factory::getInstance()->create<ObjectPlacement>();
+			objectPlacer->setObject(tower, tower->getSprite());
+		});
 
 
 
@@ -219,127 +178,9 @@ void Init()
 //------------------------------------------------------------------------
 void Update(float deltaTime)
 {
-	//------------------------------------------------------------------------
-	// Example Sprite Code....
-	//testSprite->Update(deltaTime);
-	//testSprite2->Update(deltaTime);
+	// Update input manager.
+	Input::update();
 
-
-	//if (App::GetController().GetLeftThumbStickX() > 0.5f)
-	//{
-	//	//testSprite->SetAnimation(ANIM_RIGHT);
-	//	//float x, y;
-	//	//testSprite->GetPosition(x, y);
-	//	//x += 1.0f;
-	//	//testSprite->SetPosition(x, y);
-
-	//	Transform* transform = sprite->getTransform();
-
-	//	sprite->SetAnimation(ANIM_RIGHT);
-
-	//	vec3 pos = transform->getLocalPosition();
-	//	pos.x += 1.0f;
-	//	transform->setLocalPosition(pos);
-	//}
-	//if (App::GetController().GetLeftThumbStickX() < -0.5f)
-	//{
-	//	//testSprite->SetAnimation(ANIM_LEFT);
-	//	//float x, y;
-	//	//testSprite->GetPosition(x, y);
-	//	//x -= 1.0f;
-	//	//testSprite->SetPosition(x, y);
-
-	//	Transform* transform = sprite->getTransform();
-
-	//	sprite->SetAnimation(ANIM_RIGHT);
-
-	//	vec3 pos = transform->getLocalPosition();
-	//	pos.x -= 1.0f;
-	//	transform->setLocalPosition(pos);
-	//}
-	//if (App::GetController().GetLeftThumbStickY() > 0.5f)
-	//{
-	//	//testSprite->SetAnimation(ANIM_FORWARDS);
-	//	//float x, y;
-	//	//testSprite->GetPosition(x, y);
-	//	//y += 1.0f;
-	//	//testSprite->SetPosition(x, y);
-
-	//	Transform* transform = sprite->getTransform();
-
-	//	sprite->SetAnimation(ANIM_RIGHT);
-
-	//	vec3 pos = transform->getLocalPosition();
-	//	pos.y += 1.0f;
-	//	transform->setLocalPosition(pos);
-	//}
-	//if (App::GetController().GetLeftThumbStickY() < -0.5f)
-	//{
-	//	//testSprite->SetAnimation(ANIM_BACKWARDS);
-	//	//float x, y;
-	//	//testSprite->GetPosition(x, y);
-	//	//y -= 1.0f;
-	//	//testSprite->SetPosition(x, y);
-
-	//	Transform* transform = sprite->getTransform();
-
-	//	sprite->SetAnimation(ANIM_RIGHT);
-
-	//	vec3 pos = transform->getLocalPosition();
-	//	pos.y -= 1.0f;
-	//	transform->setLocalPosition(pos);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_UP, false))
-	//{
-	//	//testSprite->SetScale(testSprite->GetScale() + 0.1f);
-
-	//	Transform* transform = sprite->getTransform();
-	//	vec3 scale = transform->getScale();
-	//	scale.x += 0.1f;
-	//	scale.y += 0.1f;
-	//	transform->setScale(scale);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_DOWN, false))
-	//{
-	//	//testSprite->SetScale(testSprite->GetScale() - 0.1f);
-
-	//	Transform* transform = sprite->getTransform();
-	//	vec3 scale = transform->getScale();
-	//	scale.x -= 0.1f;
-	//	scale.y -= 0.1f;
-	//	transform->setScale(scale);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_LEFT, false))
-	//{
-	//	//testSprite->SetAngle(testSprite->GetAngle() + 0.1f);
-
-	//	Transform* transform = sprite->getTransform();
-	//	vec3 rot = transform->getLocalRotation();
-	//	rot.z += 0.1f;
-	//	transform->setLocalRotation(rot);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_DPAD_RIGHT, false))
-	//{
-	//	//testSprite->SetAngle(testSprite->GetAngle() - 0.1f);
-
-	//	Transform* transform = sprite->getTransform();
-	//	vec3 rot = transform->getLocalRotation();
-	//	rot.z -= 0.1f;
-	//	transform->setLocalRotation(rot);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_A, true))
-	//{
-	//	//testSprite->SetAnimation(-1);
-	//	sprite->SetAnimation(-1);
-	//}
-	//if (App::GetController().CheckButton(XINPUT_GAMEPAD_B, true))
-	//{
-	//	//testSprite->SetVertex(0, testSprite->GetVertex(0) + 5.0f);
-	//	vec2 vertex = sprite->GetVertex(0);
-	//	vertex.x += 5.0f;
-	//	vertex.y += 5.0f;
-	//	sprite->SetVertex(0, vertex);
-	//}
 	//------------------------------------------------------------------------
 	// Sample Sound.
 	//------------------------------------------------------------------------
@@ -361,6 +202,25 @@ void Update(float deltaTime)
 		gameObject->fixedUpdate(fixedDeltaTime);
 		gameObject->update(scaledDeltaTime);
 	}
+
+
+
+	// Spawn enemies on a timer, and at a random spawn point.
+	static float enemyTimer = 0.0f;
+	enemyTimer += scaledDeltaTime;
+
+	if (enemyTimer >= 2.0f)
+	{
+		size_t index = MathUtils::randInRange<size_t>(0, 3);
+
+		vec3 enemySpawnPos = spawnPoints[index]->getWorldPosition();
+
+		Enemy* enemy = enemyPool->getObject();
+		enemy->transform->setWorldPosition(enemySpawnPos);
+
+		enemyTimer = 0.0f;
+	}
+
 
 
 	//Transform* transThree = compManager->getComponent<Transform>(entityThree);
@@ -388,7 +248,7 @@ void Update(float deltaTime)
 	//transFour->setWorldPosition(pos);
 
 
-
+	towerSystem->update(scaledDeltaTime);
 
 	physics2DSystem->update(1.0f / 60.0f);
 
@@ -408,22 +268,22 @@ void Render()
 	//------------------------------------------------------------------------
 	// Example Line Drawing.
 	//------------------------------------------------------------------------
-	static float a = 0.0f;
-	float r = 1.0f;
-	float g = 1.0f;
-	float b = 1.0f;
-	a += 0.1f;
-	for (int i = 0; i < 20; i++)
-	{
+	//static float a = 0.0f;
+	//float r = 1.0f;
+	//float g = 1.0f;
+	//float b = 1.0f;
+	//a += 0.1f;
+	//for (int i = 0; i < 20; i++)
+	//{
 
-		float sx = 200 + sinf(a + i * 0.1f)*60.0f;
-		float sy = 200 + cosf(a + i * 0.1f)*60.0f;
-		float ex = 700 - sinf(a + i * 0.1f)*60.0f;
-		float ey = 700 - cosf(a + i * 0.1f)*60.0f;
-		g = (float)i / 20.0f;
-		b = (float)i / 20.0f;
-		App::DrawLine(sx, sy, ex, ey,r,g,b);
-	}
+	//	float sx = 200 + sinf(a + i * 0.1f)*60.0f;
+	//	float sy = 200 + cosf(a + i * 0.1f)*60.0f;
+	//	float ex = 700 - sinf(a + i * 0.1f)*60.0f;
+	//	float ey = 700 - cosf(a + i * 0.1f)*60.0f;
+	//	g = (float)i / 20.0f;
+	//	b = (float)i / 20.0f;
+	//	App::DrawLine(sx, sy, ex, ey,r,g,b);
+	//}
 
 	//------------------------------------------------------------------------
 	// Example Sprite Code....
@@ -438,7 +298,7 @@ void Render()
 	//------------------------------------------------------------------------
 	// Example Text.
 	//------------------------------------------------------------------------
-	App::Print(100, 100, "Sample Text");
+	//App::Print(100, 100, "Sample Text");
 
 	//App::Print(20, 200, std::to_string(transform->getWorldPosition().x).c_str());
 	//App::Print(20, 150, std::to_string(transform->getWorldPosition().y).c_str());
@@ -446,6 +306,10 @@ void Render()
 
 
 	physics2DSystem->debugDraw();
+
+
+	// Perform a late update to the input system.
+	Input::lateUpdate();
 }
 //------------------------------------------------------------------------
 // Add your shutdown code here. Called when the APP_QUIT_KEY is pressed.
@@ -455,7 +319,12 @@ void Shutdown()
 {	
 	//------------------------------------------------------------------------
 	// Example Sprite Code....
-	delete testSprite;
-	delete testSprite2;
+	//delete testSprite;
+	//delete testSprite2;
 	//------------------------------------------------------------------------
+
+	for (GameObject* object : gameObjects)
+	{
+		delete object;
+	}
 }

@@ -15,9 +15,9 @@ TransformSystem::~TransformSystem()
 
 void TransformSystem::update(float deltaTime)
 {
-	ComponentManager* compManager = ComponentManager::getInstance();
+	//ComponentManager* compManager = ComponentManager::getInstance();
 
-	ComponentArray<Transform>& transformArray = compManager->getAllComponentsOfType<Transform>();
+	//ComponentArray<Transform>& transformArray = compManager->getAllComponentsOfType<Transform>();
 
 	//for (Transform* transform : transformArray)
 	//{

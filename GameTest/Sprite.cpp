@@ -14,13 +14,21 @@
 
 
 #include "Transform.h"
+#include "MathUtils.h"
+#include "Collider2D.h"
 
 
 std::map<std::string, Sprite::sTextureDef > Sprite::_textures;
 
+Sprite::Sprite(GameObject* gameObject, Transform* transform)
+    : Component(gameObject, transform)
+{
+    // TO-DO Load default sprite.
+}
+
 //-----------------------------------------------------------------------------
-Sprite::Sprite(GameObject* gameObject, Transform* _transform, const char* fileName, size_t nColumns, size_t nRows)
-    : Component(gameObject, _transform), _numColumns(nColumns), _numRows(nRows)
+Sprite::Sprite(GameObject* gameObject, Transform* transform, const char* fileName, size_t nColumns, size_t nRows)
+    : Component(gameObject, transform), _numColumns(nColumns), _numRows(nRows), _fileName(fileName)
 {
     if (LoadTexture(fileName))
     {
@@ -52,8 +60,12 @@ void Sprite::Update(float deltaTime)
     }
 }
 
-void Sprite::setTexture(const char* fileName)
+void Sprite::setTexture(const char* fileName, size_t nColumns, size_t nRows)
 {
+    _fileName = fileName;
+    _numColumns = nColumns;
+    _numRows = nRows;
+
     if (LoadTexture(fileName))
     {
         CalculateUVs();
@@ -62,6 +74,12 @@ void Sprite::setTexture(const char* fileName)
         _vertices[2] = vec2(_width / 2.0f, _height / 2.0f);
         _vertices[3] = vec2(-(_width / 2.0f), _height / 2.0f);
     }
+}
+
+bool Sprite::isMouseOverSprite(const vec2& mousePos) const
+{
+    Bounds2D bounds = Bounds2D(vec2(transform->getWorldPosition()), _vertices[2] - _vertices[0]);
+    return MathUtils::distSqrPointToAABB2D(mousePos, bounds) == 0.0f;
 }
 
 void Sprite::CalculateUVs()
@@ -100,7 +118,7 @@ void Sprite::Draw()
     //glScalef(scalex, scaley, 0.1f);
     //glRotatef(m_angle * 180 / PI, 0.0f, 0.0f, 1.0f);
 #if APP_USE_VIRTUAL_RES
-    glOrtho(0.0f, APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_HEIGHT, 0.0f, 1.0f);
+    glOrtho(0.0f, APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_HEIGHT, 0.0f, 100.0f);
 #else
     glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 #endif

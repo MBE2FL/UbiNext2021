@@ -26,12 +26,17 @@ void Physics2DSystem::update(float deltaTime)
 
 	ComponentManager* compManager = ComponentManager::getInstance();
 
-	ComponentArray<Collider2D> colliders = compManager->getAllComponentsOfType<Collider2D>();
+	ComponentArray<Collider2D>* colliders = nullptr;
+	if (!compManager->getAllComponentsOfType<Collider2D>(&colliders))
+	{
+		return;
+	}
+
 
 
 	// Compare every collider against every collider that comes after it in the component array.
 	ComponentArray<Collider2D>::iterator currentIt;
-	for (currentIt = colliders.begin(); currentIt != colliders.end(); ++currentIt)
+	for (currentIt = colliders->begin(); currentIt != colliders->end(); ++currentIt)
 	{
 		Collider2D* currentCollider = *currentIt;
 
@@ -47,7 +52,7 @@ void Physics2DSystem::update(float deltaTime)
 		ComponentArray<Collider2D>::iterator otherIt = currentIt;
 		//++otherIt;
 
-		for (otherIt = currentIt + 1; otherIt != colliders.end(); ++otherIt)
+		for (otherIt = currentIt + 1; otherIt != colliders->end(); ++otherIt)
 		{
 			Collider2D* otherCollider = *otherIt;
 
@@ -58,7 +63,7 @@ void Physics2DSystem::update(float deltaTime)
 
 
 			// Skip checking for collisions on static objects.
-			if (currentCollider->transform->getIsStatic() && otherCollider->transform->getIsStatic())
+			if (otherCollider->transform->getIsStatic())
 			{
 				continue;
 			}
@@ -98,10 +103,14 @@ void Physics2DSystem::update(float deltaTime)
 
 
 	// Update all rigidbodies.
-	ComponentArray<Rigidbody2D> rigidbodies = compManager->getAllComponentsOfType<Rigidbody2D>();
+	ComponentArray<Rigidbody2D>* rigidbodies = nullptr;
+	if (!compManager->getAllComponentsOfType<Rigidbody2D>(&rigidbodies))
+	{
+		return;
+	}
 
 	ComponentArray<Rigidbody2D>::iterator rbIt;
-	for (rbIt = rigidbodies.begin(); rbIt != rigidbodies.end(); ++rbIt)
+	for (rbIt = rigidbodies->begin(); rbIt != rigidbodies->end(); ++rbIt)
 	{
 		Rigidbody2D* rb = *rbIt;
 
@@ -124,9 +133,13 @@ void Physics2DSystem::debugDraw() const
 {
 	ComponentManager* compManager = ComponentManager::getInstance();
 
-	ComponentArray<Collider2D> colliders = compManager->getAllComponentsOfType<Collider2D>();
+	ComponentArray<Collider2D>* colliders = nullptr;
+	if (!compManager->getAllComponentsOfType<Collider2D>(&colliders))
+	{
+		return;
+	}
 
-	for (const Collider2D* collider : colliders)
+	for (const Collider2D* collider : *colliders)
 	{
 		if (collider->gameObject->getIsActive())
 		{
